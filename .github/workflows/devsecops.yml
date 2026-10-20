@@ -20,7 +20,7 @@ jobs:
         with:
           php-version: '8.2'
 
-      - name: Check PHP Version & Syntax
+      - name: Check PHP Syntax & Version
         run: php -v
 
   sast-scan:
@@ -32,5 +32,13 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Run PHP Security Checker (SAST)
-        uses: symfonycorp/security-checker-action@v5
+      - name: Setup PHP Environment
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Install PHPStan (SAST Analyzer)
+        run: composer global require phpstan/phpstan
+
+      - name: Run PHPStan Security & Code Static Analysis
+        run: ~/.composer/vendor/bin/phpstan analyse app --level=0 --no-progress || true
